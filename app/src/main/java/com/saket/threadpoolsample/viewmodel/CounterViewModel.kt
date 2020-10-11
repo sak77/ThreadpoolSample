@@ -3,7 +3,9 @@ package com.saket.threadpoolsample.viewmodel
 import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import java.util.concurrent.Callable
 import java.util.concurrent.ExecutorService
+import java.util.concurrent.Future
 
 /**
  * Data in Viewmodel drives the UI.
@@ -21,8 +23,8 @@ class CounterViewModel(private val executorService: ExecutorService) : ViewModel
         to update the UI.
      */
     fun startCounters(upperLimit: Int, currValue: (updateValue: Int, counterNumber: Int) -> Unit, handler: Handler) {
-        //Create 4 counters upto the upper limit
 
+        //The execute(Runnable) method does not return any value. It simply fires and forgets.
         executorService.execute {
             val delayMillis1 = 100L
             //Thread 1
@@ -62,6 +64,17 @@ class CounterViewModel(private val executorService: ExecutorService) : ViewModel
                 handler.post { currValue(i, 4) }
             }
         }
+    }
+
+    /*
+    Unlike fire and forget ExecutorService.execute(), the submit method returns a Future instance.
+    This Future instance can be used to return result of the task.
+     */
+    fun sayHello (name: String) : Future<String> {
+        return executorService.submit(Callable<String> {
+            Thread.sleep(2000)
+            return@Callable "Hello, $name"
+        })
     }
 
     //Arguments passed to a function are val. To modify them, you can create a local copy and work

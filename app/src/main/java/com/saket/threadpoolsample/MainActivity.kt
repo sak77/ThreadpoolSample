@@ -2,6 +2,7 @@ package com.saket.threadpoolsample
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.saket.threadpoolsample.databinding.ActivityMainBinding
 import com.saket.threadpoolsample.viewmodel.CounterViewModel
 
@@ -37,5 +38,11 @@ class MainActivity : AppCompatActivity() {
                     4 -> binding.txtCounter4.text = updateValue.toString()
                 }
             })
+
+        //demonstrating how executorService.submit(Callable) can be used to return a
+        //Future instance as a result. We can use the .get() method to get result from the
+        // callable task..
+        val hello = counterViewModel.sayHello("Saket")
+        Log.v("MainActivity", hello.get())
     }
 }
