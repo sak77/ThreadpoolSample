@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.saket.threadpoolsample.databinding.ActivityMainBinding
 import com.saket.threadpoolsample.viewmodel.CounterViewModel
-import java.util.concurrent.ExecutorService
 
 /**
  *
@@ -24,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         val myApplication: MyApplication = applicationContext as MyApplication
 
         val ex = myApplication.getMyExecutor()
-        val handler = myApplication.getMyHandler()
+        val handler = myApplication.getMainThreadHandler()
 
         val counterViewModel = CounterViewModel(ex)
         counterViewModel.startCounters(
