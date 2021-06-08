@@ -3,8 +3,10 @@ package com.saket.threadpoolsample
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import com.saket.threadpoolsample.databinding.ActivityMainBinding
 import com.saket.threadpoolsample.viewmodel.CounterViewModel
+import com.saket.threadpoolsample.viewmodel.CounterViewModelFactory
 
 /**
  *
@@ -25,8 +27,13 @@ class MainActivity : AppCompatActivity() {
 
         val ex = myApplication.getMyExecutor()
         val handler = myApplication.getMainThreadHandler()
+        println("MainActivity onCreate called ")
+        //val counterViewModel = CounterViewModel(ex)
+        //MainActivity is the lifecycle owner of the counterViewModel
+        val counterViewModel: CounterViewModel by viewModels {
+            CounterViewModelFactory(ex)
+        }
 
-        val counterViewModel = CounterViewModel(ex)
         counterViewModel.startCounters(
             50,
             handler = handler,
@@ -42,7 +49,19 @@ class MainActivity : AppCompatActivity() {
         //demonstrating how executorService.submit(Callable) can be used to return a
         //Future instance as a result. We can use the .get() method to get result from the
         // callable task..
+        //Note that .get() method blocks execution until background task is completed.
+        //So it is important to first check if background task is complete using Future.isDone()
+        //and then get the result using .get().
         val hello = counterViewModel.sayHello("Saket")
+        while(!hello.isDone) {
+            //Log.v("MainActivity", "Background task is executing....")
+        }
         Log.v("MainActivity", hello.get())
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        println("MainActivity OnDestroy called ")
     }
 }
